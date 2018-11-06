@@ -5,6 +5,8 @@
  */
 package com.hypertech.authentication.models;
 
+import java.util.List;
+
 /**
  *
  * @author hypertech
@@ -13,6 +15,10 @@ public class Usuario extends ObjectDAO{
        
     protected int usuarioId;
     
+    protected int tipo;
+    
+    protected String usuario;
+
     protected String contrasenia;
     
     protected String nombre;
@@ -33,10 +39,12 @@ public class Usuario extends ObjectDAO{
 
     }
 
-    public Usuario(int usuarioId, String pNombre, String aPaterno, String aMaterno, String correo, String imagen,
+    public Usuario(int tipo, String usuario, String contrasenia, String pNombre, String aPaterno, String aMaterno, String correo, String imagen,
 			String telefono, String fechaRegistro) {
 	super();
-	this.usuarioId = usuarioId;
+        this.tipo = tipo;
+        this.usuario = usuario;
+        this.contrasenia = contrasenia;
         this.nombre = pNombre;
 	this.apaterno = aPaterno;
         this.amaterno = aMaterno;
@@ -55,6 +63,14 @@ public class Usuario extends ObjectDAO{
         this.usuarioId = usuarioId;
     }
 
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+    
     public void setContrasenia(String contrasenia) {
         this.contrasenia = contrasenia;
     }
@@ -117,6 +133,31 @@ public class Usuario extends ObjectDAO{
 
     public void setFecha_registro(String fecha_registro) {
         this.fecha_registro = fecha_registro;
+    }
+    
+    @Override
+    public int guardar() throws Exception{
+        
+        System.out.print("guardar");
+
+        
+        List<String> values = getValues();
+        int error = 0;
+        
+        for(int i=0; i<values.size(); i++){
+                
+            String[] value = values.get(i).split(":");
+                            
+            if(!"int".equals(value[0]))
+                if(value[0] == null || "NULL".equals(value[0]))
+                    error++;
+            
+        }
+        
+        if(error == 0 || error > 2)
+            throw new Exception("Datos incompletos");
+    
+        return super.guardar();
     }
     
 }

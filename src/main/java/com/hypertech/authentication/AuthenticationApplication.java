@@ -1,5 +1,6 @@
 package com.hypertech.authentication;
 
+import com.hypertech.authentication.models.Usuario;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

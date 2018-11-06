@@ -17,24 +17,21 @@ import org.springframework.jdbc.core.JdbcTemplate;
  *
  * @author hypertech
  */
-@PropertySource(value = { "classpath:application.properties" })
 public class ConexionDAO {
-    
-    @Autowired
-    private static Environment env;
-    
-    public static enum ACTION {
-        INSERT, UPDATE 
-    }
-    
+      
     @Bean
     public static JdbcTemplate jdbcTemplate() {
         
+        String driverClassName = "com.mysql.jdbc.Driver";
+        String url = "jdbc:mysql://localhost:3306/trustu";
+        String username = "trustu";
+        String password = "trustu";
+
         DataSource dataSource = DataSourceBuilder.create()
-                .driverClassName(env.getProperty("jdbc.driverClassName"))
-                .url(env.getProperty("jdbc.url"))
-                .username(env.getProperty("jdbc.username"))
-                .password(env.getProperty("jdbc.password"))
+                .driverClassName(driverClassName)
+                .url(url)
+                .username(username)
+                .password(password)
                 .build();
 
         return new JdbcTemplate(dataSource);
