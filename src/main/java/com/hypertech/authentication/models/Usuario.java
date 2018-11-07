@@ -13,27 +13,27 @@ import java.util.List;
  */
 public class Usuario extends ObjectDAO{
        
-    protected int usuarioId;
+    private int usuarioId;
     
-    protected int tipo;
+    private int tipo;
     
-    protected String usuario;
+    private String usuario;
 
-    protected String contrasenia;
+    private String contrasenia;
     
-    protected String nombre;
+    private String nombre;
 	
-    protected String apaterno;
+    private String apaterno;
 
-    protected String amaterno;
+    private String amaterno;
 
-    protected String correo_electronico;
+    private String correo_electronico;
 	
-    protected String archivo_selfie;
+    private String archivo_selfie;
 	
-    protected String telefono;
+    private String telefono;
 	
-    protected String fecha_registro;
+    private String fecha_registro;
 
     public Usuario() {
 
@@ -136,7 +136,7 @@ public class Usuario extends ObjectDAO{
     }
     
     @Override
-    public int guardar() throws Exception{
+    public int guarda() throws Exception{
         
         System.out.print("guardar");
 
@@ -157,7 +157,19 @@ public class Usuario extends ObjectDAO{
         if(error == 0 || error > 2)
             throw new Exception("Datos incompletos");
     
-        return super.guardar();
+        return super.guarda();
+    }
+    
+    public Usuario logIn() throws Exception{
+        
+        String query = "SELECT * FROM Usuario WHERE usuario=? OR correo_electronico=?";
+
+        Usuario resultado = (Usuario) consulta(query, new String[]{ getUsuario(), getCorreo_electronico() });
+        
+        if(!getContrasenia().equals(resultado.getContrasenia()))
+            throw new Exception("Contraseña incorrecta");
+         
+        return resultado; 
     }
     
 }

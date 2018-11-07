@@ -20,14 +20,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class ControllerUsuario {
     
     @RequestMapping(value = "guardarUsuario", method = RequestMethod.POST)
-    public ResponseJSON<Integer> guardarUsuario(@RequestBody Usuario usuario) {
+    public ResponseJSON guardarUsuario(@RequestBody Usuario usuario) {
 		 
 	try {
 			 	 		 
             if(usuario.getUsuarioId()== 0)
-		usuario.setUsuarioId(usuario.guardar());
+		usuario.setUsuarioId(usuario.guarda());
             else
-                usuario.guardar();
+                usuario.guarda();
             
             return new ResponseJSON(true, "Exitoso", usuario.getUsuarioId());	
             
@@ -37,6 +37,17 @@ public class ControllerUsuario {
         }	
 		 
     }
+    
+    @RequestMapping(value = "/loginUsuario", method = RequestMethod.POST)
+    public ResponseJSON loginUsuario(@RequestBody Usuario usuario) {
+	 
+        try {
+            return new ResponseJSON (true, "Exitoso", usuario.logIn());			 
+        }catch(Exception ex) {	
+            return new ResponseJSON (false, ex.getMessage());			 
+        }			 
+    }
+
 
     
 }
