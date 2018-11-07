@@ -140,9 +140,6 @@ public class Usuario extends Controller{
     @Override
     public int guarda() throws HException{
         
-        System.out.print("guardar");
-
-        
         List<String> values = getValues();
         int error = 0;
         
@@ -158,15 +155,35 @@ public class Usuario extends Controller{
         
         if(error == 0 || error > 2)
             throw new HException("Datos incompletos");
+        
+        Usuario resultado = null;
+        
+        try{
+            
+            String query = "SELECT * FROM Usuario WHERE usuario=? OR correo_electronico=?";
+            resultado = (Usuario) consulta(query, new String[]{ getUsuario(), getCorreo_electronico() });
+
+        }catch(HException ex){ }
+        
+        if(resultado != null)
+            throw new HException("Usuario ya registrado");
     
         return super.guarda();
     }
     
     public Usuario logIn() throws HException {
+                
+        Usuario resultado = null;
         
-        String query = "SELECT * FROM Usuario WHERE usuario=? OR correo_electronico=?";
+        try{
+            
+            String query = "SELECT * FROM Usuario WHERE usuario=? OR correo_electronico=?";
+            resultado = (Usuario) consulta(query, new String[]{ getUsuario(), getCorreo_electronico() });
 
-        Usuario resultado = (Usuario) consulta(query, new String[]{ getUsuario(), getCorreo_electronico() });
+        }catch(HException ex){ }
+        
+        if(resultado != null)
+            throw new HException("Usuario no registrado");
         
         if(!getContrasenia().equals(resultado.getContrasenia()))
             throw new HException("Contraseña incorrecta");

@@ -204,6 +204,24 @@ public abstract class Controller{
             throw new HException("No se contienen datos");
      
         return values;
-    }   
-        
+    } 
+    
+    public String md5(String string) throws Exception {
+		
+	try {
+            
+            String sql = "SELECT md5(?);";
+            JdbcTemplate jdbcTemplate = ConexionDAO.jdbcTemplate();
+			 
+            String result = jdbcTemplate.queryForObject(
+                            sql, new Object[] { string }, String.class);
+				
+            return result;
+			
+	}catch(DataAccessException ex) {
+            throw new HException("Error MD5", ex.getMessage(), ex);
+	}	
+		
+    }
+
 }
