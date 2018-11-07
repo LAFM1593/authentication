@@ -5,17 +5,27 @@
  */
 package com.hypertech.authentication.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /**
  *
  * @author hypertech
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResponseJSON<T> {
 	
     private boolean status;
 
     private String message;
+    
+    private String error;
 
     private T data;
+    
+    public ResponseJSON(boolean status, String message) {
+        this.status = status;
+        this.message = message;
+    }
 
     public ResponseJSON(boolean status, String message, T data) {
         this.status = status;
@@ -23,9 +33,17 @@ public class ResponseJSON<T> {
         this.data = data;
     }
     
-    public ResponseJSON(boolean status, String message) {
+    public ResponseJSON(boolean status, String message, String error) {
         this.status = status;
         this.message = message;
+        this.error = error;
+    }
+    
+    public ResponseJSON(boolean status, String message, String error, T data) {
+        this.status = status;
+        this.message = message;
+        this.error = error;
+        this.data = data;
     }
 
     public boolean isStatus() {
@@ -42,6 +60,14 @@ public class ResponseJSON<T> {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
     }
 
     public T getData() {

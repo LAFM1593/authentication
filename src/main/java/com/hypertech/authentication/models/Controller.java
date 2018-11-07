@@ -21,9 +21,9 @@ import org.springframework.jdbc.support.KeyHolder;
  *
  * @author hypertech
  */
-public abstract class ObjectDAO{
+public abstract class Controller{
             
-    public int guarda() throws Exception{
+    public int guarda() throws HException {
         
         try{
             
@@ -57,13 +57,13 @@ public abstract class ObjectDAO{
         
             return key.getKey().intValue();
             
-        }catch(Exception ex) {
-            throw new Exception("Error al registrar los datos");
+        }catch(DataAccessException ex) {
+            throw new HException("Error al registrar los datos", ex.getMessage(), ex);
 	}
         
     }
     
-    public void actualiza(String... conditions) throws Exception{
+    public void actualiza(String... conditions) throws HException{
         
         try{
             
@@ -79,22 +79,22 @@ public abstract class ObjectDAO{
                 }
             }
             
-        }catch(Exception ex) {
-            throw new Exception("Error al actualizar los datos");
+        }catch(HException ex) {
+            throw new HException("Error al actualizar los datos", ex.getMessage(), ex);
 	}     
              
     }
     
-    public void elimina(String query) throws Exception{
+    public void elimina(String query) throws HException{
         
         try{
             
         }catch(Exception ex) {
-            throw new Exception("Error al eliminar los datos");
+            throw new HException("Error al eliminar los datos", ex.getMessage(), ex);
 	}
     }
     
-    public Object consulta(String query, String... conditions) throws Exception {
+    public Object consulta(String query, String... conditions) throws HException {
         
         try{
             
@@ -104,12 +104,12 @@ public abstract class ObjectDAO{
 		query, conditions, new BeanPropertyRowMapper(getClass()));
             
         }catch(DataAccessException ex) {
-            throw new Exception("No se encontraron resultados");
+            throw new HException("No se encontraron resultados", ex.getMessage(), ex);
 	}
 
     }
     
-    public List consultar(String... conditions) throws Exception{
+    public List consultar(String... conditions) throws HException{
         
         try{
             
@@ -133,12 +133,12 @@ public abstract class ObjectDAO{
             return resultado;
             
         }catch(DataAccessException ex) {
-            throw new Exception("No se encontraron resultados");
+            throw new HException("No se encontraron resultados", ex.getMessage(), ex);
 	}
         
     }
 
-    protected String toString(Enums.ACTION action) throws Exception {
+    protected String toString(Enums.ACTION action) throws HException {
         
         ArrayList<String> data = new ArrayList();
         ArrayList<String> values = new ArrayList();
@@ -146,15 +146,19 @@ public abstract class ObjectDAO{
         
         switch(action){
             case INSERT:
-                
-                for (int i = 1; i < field.length; i++)
+                try {
+                    
+                    for (int i = 1; i < field.length; i++)
                     if(field[i].get(this) != null){
                         data.add(field[i].getName());
                         values.add("?");
                     }  
+                    
+                } catch(IllegalAccessException ex){ }
+                
                 
                 if(data.isEmpty())
-                    throw new Exception("No se contienen datos");
+                    throw new HException("No se contienen datos");
                 
                 return  "INSERT INTO " + this.getClass().getSimpleName() + " (" + String.join(", ", data) + ") VALUES (" + String.join(", ", values) + ");";
                 
@@ -162,34 +166,42 @@ public abstract class ObjectDAO{
                 
                 String value = "";
                 
-                for (int i = 1; i < field.length; i++)
+                try {
+                    
+                    for (int i = 1; i < field.length; i++)
                     if(field[i].get(this) != null)
                         data.add(field[i].getName() + "=?");
-                    
+                
+                } catch(IllegalAccessException ex){ }
+                
                 if(data.isEmpty())
-                    throw new Exception("No se contienen datos");
+                    throw new HException("No se contienen datos");
                 
                 return "UPDATE " + this.getClass().getSimpleName() + " SET " + String.join(", ", data);
                 
         }
                  
-        throw new Exception("No se contienen datos");
+        throw new HException("No se contienen datos");
     }
     
-    protected List<String> getValues() throws Exception {
+    protected List<String> getValues() throws HException {
         
         ArrayList<String> values = new ArrayList();
         Field field[] = this.getClass().getDeclaredFields();
         
-        for (int i = 1; i < field.length; i++)
+        try {
+            
+            for (int i = 1; i < field.length; i++)
             if(field[i].get(this) != null)
                 if("int".equals(field[i].getType().toString()))
                     values.add("int:" + field[i].get(this));
                 else
                     values.add("" + field[i].get(this));
+            
+        } catch(IllegalAccessException ex){ }
         
         if(values.isEmpty())
-            throw new Exception("No se contienen datos");
+            throw new HException("No se contienen datos");
      
         return values;
     }   

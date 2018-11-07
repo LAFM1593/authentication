@@ -5,6 +5,7 @@
  */
 package com.hypertech.authentication.controllers;
 
+import com.hypertech.authentication.models.HException;
 import com.hypertech.authentication.models.ResponseJSON;
 import com.hypertech.authentication.models.Usuario;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,13 +28,12 @@ public class ControllerUsuario {
             if(usuario.getUsuarioId()== 0)
 		usuario.setUsuarioId(usuario.guarda());
             else
-                usuario.guarda();
+                usuario.actualiza("usuarioId=" + usuario.getUsuarioId());
             
             return new ResponseJSON(true, "Exitoso", usuario.getUsuarioId());	
             
-	} catch(Exception ex) {
-            
-            return new ResponseJSON(false, "Error : " + ex.getMessage());			 
+	} catch(HException e) {
+            return e.getResponse();			 
         }	
 		 
     }
@@ -42,9 +42,23 @@ public class ControllerUsuario {
     public ResponseJSON loginUsuario(@RequestBody Usuario usuario) {
 	 
         try {
-            return new ResponseJSON (true, "Exitoso", usuario.logIn());			 
-        }catch(Exception ex) {	
-            return new ResponseJSON (false, ex.getMessage());			 
+            
+            return new ResponseJSON (true, "Exitoso", usuario.logIn());	
+            
+        } catch(HException e) {
+            return e.getResponse();			 
+        }			 
+    }
+    
+    @RequestMapping(value = "/consultarUsuarios", method = RequestMethod.POST)
+    public ResponseJSON consultarUsuarios() {
+	 
+        try {
+            
+            return new ResponseJSON (true, "Exitoso", new Usuario().consultar());	
+            
+        } catch(HException e) {
+            return e.getResponse();			 
         }			 
     }
 

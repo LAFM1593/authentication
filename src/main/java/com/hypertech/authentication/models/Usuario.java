@@ -5,13 +5,15 @@
  */
 package com.hypertech.authentication.models;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
 /**
  *
  * @author hypertech
  */
-public class Usuario extends ObjectDAO{
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class Usuario extends Controller{
        
     private int usuarioId;
     
@@ -136,7 +138,7 @@ public class Usuario extends ObjectDAO{
     }
     
     @Override
-    public int guarda() throws Exception{
+    public int guarda() throws HException{
         
         System.out.print("guardar");
 
@@ -155,19 +157,19 @@ public class Usuario extends ObjectDAO{
         }
         
         if(error == 0 || error > 2)
-            throw new Exception("Datos incompletos");
+            throw new HException("Datos incompletos");
     
         return super.guarda();
     }
     
-    public Usuario logIn() throws Exception{
+    public Usuario logIn() throws HException {
         
         String query = "SELECT * FROM Usuario WHERE usuario=? OR correo_electronico=?";
 
         Usuario resultado = (Usuario) consulta(query, new String[]{ getUsuario(), getCorreo_electronico() });
         
         if(!getContrasenia().equals(resultado.getContrasenia()))
-            throw new Exception("Contraseña incorrecta");
+            throw new HException("Contraseña incorrecta");
          
         return resultado; 
     }
